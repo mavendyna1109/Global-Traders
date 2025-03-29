@@ -533,6 +533,8 @@
     /*------------------------------------------
         = CONTACT FORM SUBMISSION
     -------------------------------------------*/
+    emailjs.init("o12VfMF2v7qumBjyF"); // Replace with your EmailJS User ID
+
     if ($("#contact-form-main").length) {
         $("#contact-form-main").validate({
             rules: {
@@ -553,61 +555,34 @@
                 $("#loader").show(); // Show loader
 
                 var formData = {
-                    sender: { 
-                        name: "Global Traders",  // Your company name as sender
-                        email: "maharanahardhik@gmail.com" // Your verified email in Brevo
-                    },
-                    to: [{ 
-                        email: "maharanahardhik@gmail.com",  // Where you want to receive emails
-                        name: "Global Traders"
-                    }],
-                    replyTo: {
-                        email: $("#email").val(), // User's email so you can reply
-                        name: $("#name").val()
-                    },
-                    subject: "Contact Request - " + $("select[name='subject']").val(),
-                    htmlContent: `
-                        <h2>New Contact Request</h2>
-                        <p><strong>Name:</strong> ${$("#name").val()}</p>
-                        <p><strong>Email:</strong> ${$("#email").val()}</p>
-                        <p><strong>Phone:</strong> ${$("#phone").val()}</p>
-                        <p><strong>Subject:</strong> ${$("select[name='subject']").val()}</p>
-                        <p><strong>Message:</strong></p>
-                        <p>${$("#note").val()}</p>
-                    `
+                    from_name: $("#name").val(),
+                    from_email: $("#email").val(),
+                    reply_to: $("#email").val(), // Allows direct reply from email
+                    subject: $("#subject").val(),
+                    message: $("#note").val(),
+                    phone: $("#phone").val()
                 };
 
-                $.ajax({
-                    type: "POST",
-                    url: "https://api.brevo.com/v3/smtp/email",
-                    contentType: "application/json",
-                    headers: {
-                        "accept": "application/json",
-                        "api-key": "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" // Replace with your actual Brevo API key
-                    },
-                    data: JSON.stringify(formData),
-                    success: function () {
+                emailjs.send("service_a7q6wj6", "template_s4m79u5", formData)
+                    .then(response => {
+                        // console.log("Email sent successfully!", response.status, response.text);
                         $("#loader").hide();
                         $("#success").slideDown("slow");
-                        setTimeout(function () {
-                            $("#success").slideUp("slow");
-                        }, 3000);
+                        setTimeout(() => $("#success").slideUp("slow"), 3000);
                         form.reset();
-                    },
-                    error: function () {
+                    })
+                    .catch(error => {
+                        // console.error("Error sending email:", error);
                         $("#loader").hide();
                         $("#error").slideDown("slow");
-                        setTimeout(function () {
-                            $("#error").slideUp("slow");
-                        }, 3000);
-                    }
-                });
+                        setTimeout(() => $("#error").slideUp("slow"), 3000);
+                    });
 
                 return false; // Prevent default form submission
             }
         });
     }
-
+    
 
     /*==========================================================================
         WHEN DOCUMENT LOADING
