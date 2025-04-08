@@ -627,4 +627,12 @@
 
     });
 
+    //contact.click
+
+    $(".contactbtn").click(function () {
+        $('html, body').animate({
+            scrollTop: $("#ContactSec").offset().top
+        }, 900); // 800ms = scroll duration
+    });
+
 })(window.jQuery);
